@@ -1,5 +1,9 @@
 # CS439 Mini-Project
 
+## PyAudio installation
+
+See https://people.csail.mit.edu/hubert/pyaudio/
+
 Here are some helpful links:
 
 * PyAudio documentation: https://people.csail.mit.edu/hubert/pyaudio/

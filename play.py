@@ -1,30 +1,29 @@
-import pyaudio
 import numpy as np
+import pyaudio
 import wave
-import struct
 import sys
 
-CHUNK = 1024
+RATE = 44100
+DURATION = 2.0
 
-if len(sys.argv) < 2:
-    print("Plays a wave file.\n\nUsage: %s filename.wav" % sys.argv[0])
-    sys.exit(-1)
+def sound_array():
+    frequency = 440
+    t = np.linspace(0, DURATION, num = RATE * DURATION, endpoint = False)
+    return np.cos(2 * np.pi * frequency * t)
 
-wf = wave.open(sys.argv[1], 'rb')
+# arr is np array of floats between -1 and 1
+def to_bytes(arr):
+    shifted = np.array(arr * (2**15 - 1), dtype=np.int16)
+    return shifted.tobytes()
 
 p = pyaudio.PyAudio()
 
-stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                channels=wf.getnchannels(),
-                rate=wf.getframerate(),
+stream = p.open(format=pyaudio.paInt16,
+                channels=1,
+                rate=RATE,
                 output=True)
 
-data = wf.readframes(CHUNK)
-
-while data != '':
-    stream.write(data)
-    data = wf.readframes(CHUNK)
-
+stream.write(to_bytes(sound_array()))
 stream.stop_stream()
 stream.close()
 
